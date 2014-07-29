@@ -1,10 +1,31 @@
 #!/bin/bash
 
-CD_CMD="cd "\\\"$(pwd)\\\"" && echo -e -n '\\\\0033\\\\0143'"
+CD_CMD="cd \\\"$(pwd)\\\" && echo -e -n '\\\\0033\\\\0143'"
 VERSION=$(sw_vers -productVersion)
 if (( $(expr $VERSION '<' 10.7.0) )); then
 	IN_WINDOW="in window 1"
 fi
+osascript<<END
+tell application "Terminal"
+	activate
+	do script "$CD_CMD"
+end tell
+END
+exit
+osascript<<END
+	tell application "Terminal"
+		activate
+	end tell
+	delay 0.1
+	tell application "System Events" to tell process "Terminal"
+		keystroke "t" using command down
+	end tell
+	tell application "Terminal"
+		do script "$CD_CMD" in front window
+	end tell
+END
+exit
+
 if [[ $1 == '-t' ]] ; then
 	osascript<<END
 try
